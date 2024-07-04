@@ -90,6 +90,12 @@ async function main() {
         JSON.stringify(tsconfig, null, 4),
     );
 
+    // Create README.md
+    await fs.writeFile(
+        path.join(packageDir, 'README.md'),
+        `# @pocono/${packageName}\n\n`,
+    );
+
     console.log(`Package ${packageName} created successfully!`);
 
     // Initialize git repository and install dependencies
