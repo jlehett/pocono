@@ -51,6 +51,7 @@ export default [
         rules: {
             ...tsPlugin.configs['recommended'].rules,
             // Add any custom rules for TypeScript files here
+            '@typescript-eslint/no-explicit-any': 'off',
         },
     },
 

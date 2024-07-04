@@ -47,6 +47,7 @@ async function main() {
         files: ['dist/'],
         scripts: {
             build: 'tsc',
+            test: 'jest',
         },
     };
 
@@ -93,7 +94,6 @@ async function main() {
 
     // Initialize git repository and install dependencies
     process.chdir(packageDir);
-    execSync('git init', { stdio: 'inherit' });
     execSync('npm install', { stdio: 'inherit' });
 
     console.log('Package initialized and dependencies installed.');
