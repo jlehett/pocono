@@ -2,4 +2,4 @@
 
 ## Packages
 
-- [@pocono/func-comp](./packages/func-comp/);
+- [@pocono/func-comp](./packages/func-comp/)
