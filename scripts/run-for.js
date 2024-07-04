@@ -35,20 +35,18 @@ async function main() {
         },
     ]);
 
-    const command = process.argv.slice(2).join(' ');
+    const command = process.argv.slice(2);
 
-    if (!command) {
+    if (command.length === 0) {
         console.error('No command provided. Usage: node run-for.js <command>');
         process.exit(1);
     }
 
     const packageDir = path.join(PACKAGES_DIR, selectedPackage);
 
-    console.log(`Running "${command}" in ${packageDir}`);
+    console.log(`Running "${command.join(' ')}" in ${packageDir}`);
 
-    const [cmd, ...args] = command.split(' ');
-
-    const childProcess = spawn(cmd, args, {
+    const childProcess = spawn(command[0], command.slice(1), {
         cwd: packageDir,
         stdio: 'inherit',
         shell: true,

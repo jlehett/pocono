@@ -95,6 +95,7 @@ async function main() {
     // Initialize git repository and install dependencies
     process.chdir(packageDir);
     execSync('npm install', { stdio: 'inherit' });
+    execSync('npx changeset init', { stdio: 'inherit' });
 
     console.log('Package initialized and dependencies installed.');
 }
