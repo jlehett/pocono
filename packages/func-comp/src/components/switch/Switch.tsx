@@ -1,7 +1,9 @@
-import React, { isValidElement, Children, useMemo, useEffect } from 'react';
-import Case from './Case';
-import DefaultCase from './DefaultCase';
-import { validateChildren } from './utils';
+import React, { useMemo, useEffect } from 'react';
+import {
+    getDefaultCase,
+    getFirstMatchingCase,
+    validateChildren,
+} from './utils';
 
 export type SwitchProps = {
     expr: any;
@@ -14,22 +16,11 @@ export default function Switch({ expr, children }: SwitchProps) {
     }, [children]);
 
     const matchingCase = useMemo(
-        () =>
-            Children.toArray(children).find((child) =>
-                isValidElement(child) && child.type === Case
-                    ? child.props.value === expr
-                    : false,
-            ),
+        () => getFirstMatchingCase(expr, children),
         [expr, children],
     );
 
-    const defaultCase = useMemo(
-        () =>
-            Children.toArray(children).find(
-                (child) => isValidElement(child) && child.type === DefaultCase,
-            ),
-        [children],
-    );
+    const defaultCase = useMemo(() => getDefaultCase(children), [children]);
 
     return matchingCase || defaultCase || null;
 }

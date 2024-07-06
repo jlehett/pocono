@@ -1,11 +1,19 @@
 import React from 'react';
 import Case from './Case';
 import DefaultCase from './DefaultCase';
+import {
+    getFirstEleOfType,
+    isChildASubcomponent_factory,
+    numChildrenOfType,
+} from '../../utils/ele-utils';
+import {
+    validateChild_factory,
+    validateChildren_factory,
+} from '../../utils/child-validation';
 
 //#region Types
 
-const SwitchSubcomponents = [Case, DefaultCase] as const;
-type SwitchSubcomponentType = (typeof SwitchSubcomponents)[number];
+const SwitchSubcomponents = [Case, DefaultCase];
 
 //#endregion
 
@@ -29,45 +37,48 @@ class SwitchError extends Error {
 
 //#region Helper Functions
 
-function doesChildHaveType(
-    child: React.ReactNode,
-    type: SwitchSubcomponentType,
-): boolean {
-    return React.isValidElement(child) && child.type === type;
-}
-
-function isChildASubcomponent(child: React.ReactNode): boolean {
-    return SwitchSubcomponents.some((type) => doesChildHaveType(child, type));
-}
+const isChildASubcomponent = isChildASubcomponent_factory(SwitchSubcomponents);
 
 //#endregion
 
 //#region Validation Functions
 
-function validateChild(child: React.ReactNode): void {
-    if (!isChildASubcomponent(child)) {
-        throw new SwitchError('InvalidChildren');
-    }
+const validateChild = validateChild_factory<SwitchError>(
+    new Map([[isChildASubcomponent, new SwitchError('InvalidChildren')]]),
+);
+
+export const validateChildren = validateChildren_factory<SwitchError>(
+    validateChild,
+    new Map([
+        [
+            (children: React.ReactNode) => !children,
+            () => new SwitchError('MissingChildren'),
+        ],
+        [
+            (children: React.ReactNode) =>
+                numChildrenOfType(DefaultCase, children) > 1,
+            () => new SwitchError('MultipleDefaultCases'),
+        ],
+    ]),
+);
+
+//#endregion
+
+//#region Utility Functions
+
+export function getFirstMatchingCase(
+    expr: any,
+    children: React.ReactNode,
+): React.ReactNode | null {
+    return getFirstEleOfType(Case, children, [
+        (child) => React.isValidElement(child) && child.props.value === expr,
+    ]);
 }
 
-function hasMultipleDefaultCases(children: React.ReactNode): boolean {
-    return (
-        React.Children.toArray(children).filter((child) =>
-            doesChildHaveType(child, DefaultCase),
-        ).length > 1
-    );
-}
-
-export function validateChildren(children: React.ReactNode): void {
-    if (!children) {
-        throw new SwitchError('MissingChildren');
-    }
-
-    if (hasMultipleDefaultCases(children)) {
-        throw new SwitchError('MultipleDefaultCases');
-    }
-
-    React.Children.toArray(children).forEach(validateChild);
+export function getDefaultCase(
+    children: React.ReactNode,
+): React.ReactNode | null {
+    return getFirstEleOfType(DefaultCase, children);
 }
 
 //#endregion
