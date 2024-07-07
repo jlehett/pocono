@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { render, act } from '@testing-library/react';
+import React from 'react';
+import { render } from '@testing-library/react';
 import Switch from './index';
+import { createRenderCycleTest } from '../../tests/perf-utils/render-cycle-testing';
 
 describe('Switch', () => {
     beforeEach(() => {
@@ -173,57 +174,25 @@ describe('Switch', () => {
     });
 
     describe('when used in a component that re-renders', () => {
-        const renderTracker = jest.fn();
-        const mountTracker = jest.fn();
-        const unmountTracker = jest.fn();
-
-        const CaseContent = ({ id }: any) => {
-            useEffect(() => {
-                mountTracker(id);
-                return () => unmountTracker(id);
-            }, []);
-
-            renderTracker(id);
-
-            return <p>Case Content</p>;
-        };
-
-        beforeEach(() => {
-            renderTracker.mockClear();
-            mountTracker.mockClear();
-            unmountTracker.mockClear();
-        });
-
         it('should re-render without unmounting / remounting the case content when the container re-renders', () => {
-            const Container = () => {
-                const [, setState] = useState(0);
-
-                return (
-                    <div>
-                        <Switch expr={1}>
-                            <Switch.Case value={1}>
-                                <CaseContent />
-                            </Switch.Case>
-                        </Switch>
-                        <button
-                            data-testid="update-container"
-                            onClick={() => setState((prev) => prev + 1)}
-                        >
-                            Update
-                        </button>
-                    </div>
-                );
-            };
-
-            const rtl = render(<Container />);
+            const {
+                renderTracker,
+                mountTracker,
+                unmountTracker,
+                updateContainer,
+            } = createRenderCycleTest((RenderTracker) => () => (
+                <Switch expr={1}>
+                    <Switch.Case value={1}>
+                        <RenderTracker />
+                    </Switch.Case>
+                </Switch>
+            ));
 
             expect(renderTracker).toHaveBeenCalledTimes(1);
             expect(mountTracker).toHaveBeenCalledTimes(1);
             expect(unmountTracker).not.toHaveBeenCalled();
 
-            act(() => {
-                rtl.getByTestId('update-container').click();
-            });
+            updateContainer();
 
             expect(renderTracker).toHaveBeenCalledTimes(2);
             expect(mountTracker).toHaveBeenCalledTimes(1);
@@ -231,32 +200,26 @@ describe('Switch', () => {
         });
 
         it('should unmount / remount the case content when the case changes', () => {
-            const Container = () => {
-                const [expr, setExpr] = useState(1);
-
-                return (
-                    <div>
-                        <Switch expr={expr}>
+            const {
+                renderTracker,
+                mountTracker,
+                unmountTracker,
+                updateContainer,
+            } = createRenderCycleTest(
+                (RenderTracker) =>
+                    ({ containerValue }) => (
+                        <Switch expr={containerValue}>
                             <Switch.Case value={1}>
-                                <CaseContent id={1} />
+                                <RenderTracker id={1} />
                             </Switch.Case>
                             <Switch.Case value={2}>
-                                <CaseContent id={2} />
+                                <RenderTracker id={2} />
                             </Switch.Case>
                         </Switch>
-                        <button
-                            data-testid="update-expr"
-                            onClick={() =>
-                                setExpr((prev) => (prev === 1 ? 2 : 1))
-                            }
-                        >
-                            Update
-                        </button>
-                    </div>
-                );
-            };
-
-            const rtl = render(<Container />);
+                    ),
+                1,
+                (prev) => (prev === 1 ? 2 : 1),
+            );
 
             expect(renderTracker).toHaveBeenCalledTimes(1);
             expect(renderTracker).toHaveBeenCalledWith(1);
@@ -264,9 +227,7 @@ describe('Switch', () => {
             expect(mountTracker).toHaveBeenCalledWith(1);
             expect(unmountTracker).not.toHaveBeenCalled();
 
-            act(() => {
-                rtl.getByTestId('update-expr').click();
-            });
+            updateContainer();
 
             expect(renderTracker).toHaveBeenCalledTimes(2);
             expect(renderTracker).toHaveBeenCalledWith(2);
