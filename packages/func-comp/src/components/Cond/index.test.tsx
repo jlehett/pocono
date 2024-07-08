@@ -263,5 +263,55 @@ describe('Cond', () => {
             expect(mountTracker).toHaveBeenCalledTimes(1);
             expect(unmountTracker).not.toHaveBeenCalled();
         });
+
+        it("should unmount / remount each condition's (If, ElseIf, Else) when the condition expressions change", () => {
+            const {
+                renderTracker,
+                mountTracker,
+                unmountTracker,
+                updateContainer,
+            } = createRenderCycleTest(
+                (RenderTracker) =>
+                    ({ containerValue }) => (
+                        <Cond>
+                            <Cond.If expr={containerValue === 0}>
+                                <RenderTracker id={0} />
+                            </Cond.If>
+                            <Cond.ElseIf expr={containerValue === 1}>
+                                <RenderTracker id={1} />
+                            </Cond.ElseIf>
+                            <Cond.Else>
+                                <RenderTracker id="Else" />
+                            </Cond.Else>
+                        </Cond>
+                    ),
+                0,
+                (prev) => prev + 1,
+            );
+
+            expect(renderTracker).toHaveBeenCalledTimes(1);
+            expect(renderTracker).toHaveBeenCalledWith(0);
+            expect(mountTracker).toHaveBeenCalledTimes(1);
+            expect(mountTracker).toHaveBeenCalledWith(0);
+            expect(unmountTracker).not.toHaveBeenCalled();
+
+            updateContainer();
+
+            expect(renderTracker).toHaveBeenCalledTimes(2);
+            expect(renderTracker).toHaveBeenCalledWith(1);
+            expect(mountTracker).toHaveBeenCalledTimes(2);
+            expect(mountTracker).toHaveBeenCalledWith(1);
+            expect(unmountTracker).toHaveBeenCalledTimes(1);
+            expect(unmountTracker).toHaveBeenCalledWith(0);
+
+            updateContainer();
+
+            expect(renderTracker).toHaveBeenCalledTimes(3);
+            expect(renderTracker).toHaveBeenCalledWith('Else');
+            expect(mountTracker).toHaveBeenCalledTimes(3);
+            expect(mountTracker).toHaveBeenCalledWith('Else');
+            expect(unmountTracker).toHaveBeenCalledTimes(2);
+            expect(unmountTracker).toHaveBeenCalledWith(1);
+        });
     });
 });

@@ -1,7 +1,10 @@
-import If, { IfProps } from './If';
+import React from 'react';
 
-interface IfComponent extends React.FC<IfProps> {}
+export type IfProps = {
+    expr: boolean;
+    children: React.ReactNode;
+};
 
-const IfComponent = If as IfComponent;
-
-export default IfComponent;
+export default function If({ expr, children }: IfProps) {
+    return expr ? children : null;
+}
