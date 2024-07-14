@@ -314,4 +314,19 @@ describe('Cond', () => {
             expect(unmountTracker).toHaveBeenCalledWith(1);
         });
     });
+
+    describe('when rendering a Cond subcomponent and the parent is NOT a Cond element', () => {
+        describe('and the subcomponent is Cond.If', () => {
+            const getScenario = () =>
+                render(
+                    <div>
+                        <Cond.If expr={true}>If True</Cond.If>
+                    </div>,
+                );
+
+            it('should throw an error', () => {
+                expect(getScenario).toThrow();
+            });
+        });
+    });
 });

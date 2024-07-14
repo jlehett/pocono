@@ -25,10 +25,12 @@ const CondErrorConfig = {
     MultipleElseChildren: 'Cond cannot have multiple Else children',
     InvalidIfPosition: 'If must be the first child of Cond',
     InvalidElsePosition: 'Else must be the last child of Cond',
+    SubcomponentWithInvalidParent:
+        'All Cond subcomponents must have Cond as a direct parent',
 } as const;
 type CondErrorType = keyof typeof CondErrorConfig;
 
-class CondError extends Error {
+export class CondError extends Error {
     constructor(type: CondErrorType) {
         super(CondErrorConfig[type]);
         this.name = 'CondError';
