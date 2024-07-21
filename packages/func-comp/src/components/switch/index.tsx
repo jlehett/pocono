@@ -1,9 +1,9 @@
 import Switch, { SwitchProps } from './Switch';
 import { WithinParentProps } from '../../utils/direct-child-validation';
-import { ValueProp, Case, Default } from './subcomponents';
+import { CaseProp, Case, Default } from './subcomponents';
 
 interface SwitchComponent extends React.FC<SwitchProps> {
-    Case: React.FC<ValueProp>;
+    Case: React.FC<CaseProp>;
     Default: React.FC<WithinParentProps>;
 }
 

@@ -9,28 +9,85 @@ describe('Switch', () => {
     });
 
     describe('when a matching case exists', () => {
-        const getScenario = () =>
-            render(
-                <Switch expr={2}>
-                    <Switch.Case value={1}>One</Switch.Case>
-                    <Switch.Case value={2}>Two</Switch.Case>
-                    <Switch.Case value={2}>Two Copy</Switch.Case>
-                    <Switch.Case value={3}>Three</Switch.Case>
-                    <Switch.Default>Default</Switch.Default>
-                </Switch>,
-            );
+        describe('and the case has a break prop', () => {
+            const getScenario = () =>
+                render(
+                    <Switch expr={2}>
+                        <Switch.Case value={1} break>
+                            One
+                        </Switch.Case>
+                        <Switch.Case value={2} break>
+                            Two
+                        </Switch.Case>
+                        <Switch.Case value={2} break>
+                            Two Copy
+                        </Switch.Case>
+                        <Switch.Case value={3} break>
+                            Three
+                        </Switch.Case>
+                        <Switch.Default>Default</Switch.Default>
+                    </Switch>,
+                );
 
-        it('should render the first matching case', () => {
-            const { queryByText } = getScenario();
-            expect(queryByText('Two')).toBeInTheDocument();
+            it('should render the first matching case', () => {
+                const { queryByText } = getScenario();
+                expect(queryByText('Two')).toBeInTheDocument();
+            });
+
+            it('should not render any other cases', () => {
+                const { queryByText } = getScenario();
+                expect(queryByText('One')).not.toBeInTheDocument();
+                expect(queryByText('Two Copy')).not.toBeInTheDocument();
+                expect(queryByText('Three')).not.toBeInTheDocument();
+                expect(queryByText('Default')).not.toBeInTheDocument();
+            });
         });
 
-        it('should not render any other cases', () => {
-            const { queryByText } = getScenario();
-            expect(queryByText('One')).not.toBeInTheDocument();
-            expect(queryByText('Two Copy')).not.toBeInTheDocument();
-            expect(queryByText('Three')).not.toBeInTheDocument();
-            expect(queryByText('Default')).not.toBeInTheDocument();
+        describe('and the case does not have a break prop', () => {
+            describe('but a break prop exists on a matching case after it', () => {
+                const getScenario = () =>
+                    render(
+                        <Switch expr={true}>
+                            <Switch.Case value={true}>1</Switch.Case>
+                            <Switch.Case value={false}>2</Switch.Case>
+                            <Switch.Case value={true} break>
+                                3
+                            </Switch.Case>
+                            <Switch.Case value={true}>4</Switch.Case>
+                            <Switch.Default>5</Switch.Default>
+                        </Switch>,
+                    );
+
+                it('should render all matching cases until it hits a case with a break prop', () => {
+                    const { queryByText } = getScenario();
+                    expect(queryByText(/1\s*3/)).toBeInTheDocument();
+                    expect(queryByText('4')).not.toBeInTheDocument();
+                    expect(queryByText('5')).not.toBeInTheDocument();
+                });
+            });
+
+            describe('and no break prop exists on a matching case after it', () => {
+                const getScenario = () =>
+                    render(
+                        <Switch expr={2}>
+                            <Switch.Case value={1} break>
+                                1
+                            </Switch.Case>
+                            <Switch.Case value={2}>2</Switch.Case>
+                            <Switch.Case value={3} break>
+                                3
+                            </Switch.Case>
+                            <Switch.Default>Default</Switch.Default>
+                        </Switch>,
+                    );
+
+                it('should render all matching cases and the default case', () => {
+                    const { queryByText } = getScenario();
+                    expect(queryByText('1')).not.toBeInTheDocument();
+                    expect(queryByText(/2\s*Default/)).toBeInTheDocument();
+                    expect(queryByText('3')).not.toBeInTheDocument();
+                });
+            });
         });
     });
 
@@ -39,9 +96,15 @@ describe('Switch', () => {
             const getScenario = () =>
                 render(
                     <Switch expr={4}>
-                        <Switch.Case value={1}>One</Switch.Case>
-                        <Switch.Case value={2}>Two</Switch.Case>
-                        <Switch.Case value={3}>Three</Switch.Case>
+                        <Switch.Case value={1} break>
+                            One
+                        </Switch.Case>
+                        <Switch.Case value={2} break>
+                            Two
+                        </Switch.Case>
+                        <Switch.Case value={3} break>
+                            Three
+                        </Switch.Case>
                         <Switch.Default>Default</Switch.Default>
                     </Switch>,
                 );
@@ -63,9 +126,15 @@ describe('Switch', () => {
             const getScenario = () =>
                 render(
                     <Switch expr={4}>
-                        <Switch.Case value={1}>One</Switch.Case>
-                        <Switch.Case value={2}>Two</Switch.Case>
-                        <Switch.Case value={3}>Three</Switch.Case>
+                        <Switch.Case value={1} break>
+                            One
+                        </Switch.Case>
+                        <Switch.Case value={2} break>
+                            Two
+                        </Switch.Case>
+                        <Switch.Case value={3} break>
+                            Three
+                        </Switch.Case>
                     </Switch>,
                 );
 
@@ -99,7 +168,9 @@ describe('Switch', () => {
             render(
                 <Switch expr={2}>
                     <div>Hi</div>
-                    <Switch.Case value={2}>Two</Switch.Case>
+                    <Switch.Case value={2} break>
+                        Two
+                    </Switch.Case>
                 </Switch>,
             );
 
@@ -112,9 +183,15 @@ describe('Switch', () => {
         const getScenario = () =>
             render(
                 <Switch expr={4}>
-                    <Switch.Case value={1}>One</Switch.Case>
-                    <Switch.Case value={2}>Two</Switch.Case>
-                    <Switch.Case value={3}>Three</Switch.Case>
+                    <Switch.Case value={1} break>
+                        One
+                    </Switch.Case>
+                    <Switch.Case value={2} break>
+                        Two
+                    </Switch.Case>
+                    <Switch.Case value={3} break>
+                        Three
+                    </Switch.Case>
                     <Switch.Default>Default One</Switch.Default>
                     <Switch.Default>Default Two</Switch.Default>
                 </Switch>,
@@ -129,9 +206,11 @@ describe('Switch', () => {
         const getScenario = () =>
             render(
                 <Switch expr={1}>
-                    <Switch.Case value={1}>
+                    <Switch.Case value={1} break>
                         One
-                        <Switch.Case value={2}>Two</Switch.Case>
+                        <Switch.Case value={2} break>
+                            Two
+                        </Switch.Case>
                     </Switch.Case>
                     <Switch.Default>Default</Switch.Default>
                 </Switch>,
@@ -146,16 +225,24 @@ describe('Switch', () => {
         const getScenario = () =>
             render(
                 <Switch expr={2}>
-                    <Switch.Case value={1}>
+                    <Switch.Case value={1} break>
                         <Switch expr={1}>
-                            <Switch.Case value={1}>O1I1</Switch.Case>
-                            <Switch.Case value={2}>O1I2</Switch.Case>
+                            <Switch.Case value={1} break>
+                                O1I1
+                            </Switch.Case>
+                            <Switch.Case value={2} break>
+                                O1I2
+                            </Switch.Case>
                         </Switch>
                     </Switch.Case>
-                    <Switch.Case value={2}>
+                    <Switch.Case value={2} break>
                         <Switch expr={1}>
-                            <Switch.Case value={1}>O2I1</Switch.Case>
-                            <Switch.Case value={2}>O2I2</Switch.Case>
+                            <Switch.Case value={1} break>
+                                O2I1
+                            </Switch.Case>
+                            <Switch.Case value={2} break>
+                                O2I2
+                            </Switch.Case>
                         </Switch>
                     </Switch.Case>
                 </Switch>,
@@ -179,7 +266,7 @@ describe('Switch', () => {
                 updateContainer,
             } = createRenderCycleTest((RenderTracker) => () => (
                 <Switch expr={1}>
-                    <Switch.Case value={1}>
+                    <Switch.Case value={1} break>
                         <RenderTracker />
                     </Switch.Case>
                 </Switch>
@@ -206,10 +293,10 @@ describe('Switch', () => {
                 (RenderTracker) =>
                     ({ containerValue }) => (
                         <Switch expr={containerValue}>
-                            <Switch.Case value={1}>
+                            <Switch.Case value={1} break>
                                 <RenderTracker id={1} />
                             </Switch.Case>
-                            <Switch.Case value={2}>
+                            <Switch.Case value={2} break>
                                 <RenderTracker id={2} />
                             </Switch.Case>
                         </Switch>
@@ -237,7 +324,11 @@ describe('Switch', () => {
 
     describe('when rendering a Switch subcomponent and the direct parent is NOT a Cond element', () => {
         const subcomponents = [
-            { name: 'Case', component: Switch.Case, props: { value: 1 } },
+            {
+                name: 'Case',
+                component: Switch.Case,
+                props: { value: 1, break: true },
+            },
             { name: 'Default', component: Switch.Default, props: {} },
         ];
 

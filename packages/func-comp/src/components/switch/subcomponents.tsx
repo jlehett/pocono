@@ -3,12 +3,13 @@ import {
     enforceDirectParent,
 } from '../../utils/direct-child-validation';
 
-export interface ValueProp extends WithinParentProps {
+export interface CaseProp extends WithinParentProps {
     value: any;
+    break?: boolean;
 }
 
-export const Case = enforceDirectParent<ValueProp>(
-    ({ children }: ValueProp) => children,
+export const Case = enforceDirectParent<CaseProp>(
+    ({ children }: CaseProp) => children,
     'Case',
     'Switch',
 );

@@ -1,7 +1,6 @@
 import React from 'react';
 import { Case, Default } from './subcomponents';
 import {
-    getFirstEleOfType,
     isChildASubcomponent_factory,
     numChildrenOfType,
 } from '../../utils/ele-utils';
@@ -65,19 +64,28 @@ export const validateChildren = validateChildren_factory<SwitchError>(
 
 //#region Utility Functions
 
-export function getFirstMatchingCase(
+export function getMatchingCases(
     expr: any,
     children: React.ReactNode,
-): React.ReactNode | null {
-    return getFirstEleOfType(Case, children, [
-        (child) => React.isValidElement(child) && child.props.value === expr,
-    ]);
-}
+): React.ReactNode[] {
+    const matchingCases = [];
 
-export function getDefaultCase(
-    children: React.ReactNode,
-): React.ReactNode | null {
-    return getFirstEleOfType(Default, children);
+    for (const child of React.Children.toArray(children)) {
+        if (React.isValidElement(child) && child.type === Case) {
+            if (child.props.value === expr) {
+                matchingCases.push(child);
+
+                if (child.props.break) {
+                    break;
+                }
+            }
+        } else if (React.isValidElement(child) && child.type === Default) {
+            matchingCases.push(child);
+            break;
+        }
+    }
+
+    return matchingCases;
 }
 
 //#endregion
