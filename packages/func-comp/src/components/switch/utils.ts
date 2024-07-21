@@ -1,6 +1,5 @@
 import React from 'react';
-import Case from './Case';
-import DefaultCase from './DefaultCase';
+import { Case, Default } from './subcomponents';
 import {
     getFirstEleOfType,
     isChildASubcomponent_factory,
@@ -13,16 +12,16 @@ import {
 
 //#region Types
 
-const SwitchSubcomponents = [Case, DefaultCase];
+const SwitchSubcomponents = [Case, Default];
 
 //#endregion
 
 //#region Error Config
 
 const SwitchErrorConfig = {
-    InvalidChildren: 'All Switch children must be of type Case or DefaultCase',
+    InvalidChildren: 'All Switch children must be of type Case or Default',
     MissingChildren: 'Switch must have children',
-    MultipleDefaultCases: 'Switch cannot have multiple DefaultCase children',
+    MultipleDefaults: 'Switch cannot have multiple Default children',
 } as const;
 type SwitchErrorType = keyof typeof SwitchErrorConfig;
 
@@ -56,8 +55,8 @@ export const validateChildren = validateChildren_factory<SwitchError>(
         ],
         [
             (children: React.ReactNode) =>
-                numChildrenOfType(DefaultCase, children) > 1,
-            () => new SwitchError('MultipleDefaultCases'),
+                numChildrenOfType(Default, children) > 1,
+            () => new SwitchError('MultipleDefaults'),
         ],
     ]),
 );
@@ -78,7 +77,7 @@ export function getFirstMatchingCase(
 export function getDefaultCase(
     children: React.ReactNode,
 ): React.ReactNode | null {
-    return getFirstEleOfType(DefaultCase, children);
+    return getFirstEleOfType(Default, children);
 }
 
 //#endregion

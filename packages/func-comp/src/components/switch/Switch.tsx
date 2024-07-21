@@ -4,6 +4,7 @@ import {
     getFirstMatchingCase,
     validateChildren,
 } from './utils';
+import { wrapChildrenWithParentFlag } from '../../utils/direct-child-validation';
 
 export type SwitchProps = {
     expr: any;
@@ -22,5 +23,8 @@ export default function Switch({ expr, children }: SwitchProps) {
 
     const defaultCase = useMemo(() => getDefaultCase(children), [children]);
 
-    return matchingCase || defaultCase || null;
+    return wrapChildrenWithParentFlag(
+        matchingCase || defaultCase || null,
+        'Switch',
+    );
 }

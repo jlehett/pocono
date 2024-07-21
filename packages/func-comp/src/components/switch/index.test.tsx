@@ -128,7 +128,7 @@ describe('Switch', () => {
     describe('when contains nested cases', () => {
         const getScenario = () =>
             render(
-                <Switch expr={2}>
+                <Switch expr={1}>
                     <Switch.Case value={1}>
                         One
                         <Switch.Case value={2}>Two</Switch.Case>
@@ -137,11 +137,8 @@ describe('Switch', () => {
                 </Switch>,
             );
 
-        it('should ignore nested cases', () => {
-            const { queryByText } = getScenario();
-            expect(queryByText('One')).not.toBeInTheDocument();
-            expect(queryByText('Two')).not.toBeInTheDocument();
-            expect(queryByText('Default')).toBeInTheDocument();
+        it('should throw an error', () => {
+            expect(getScenario).toThrow();
         });
     });
 
@@ -236,5 +233,28 @@ describe('Switch', () => {
             expect(unmountTracker).toHaveBeenCalledTimes(1);
             expect(unmountTracker).toHaveBeenCalledWith(1);
         });
+    });
+
+    describe('when rendering a Switch subcomponent and the direct parent is NOT a Cond element', () => {
+        const subcomponents = [
+            { name: 'Case', component: Switch.Case, props: { value: 1 } },
+            { name: 'Default', component: Switch.Default, props: {} },
+        ];
+
+        it.each(subcomponents)(
+            'should throw an error when rendering $name',
+            ({ component: Subcomponent, props }) => {
+                const getScenario = () =>
+                    render(
+                        <div>
+                            <Subcomponent {...(props as any)}>
+                                Test
+                            </Subcomponent>
+                        </div>,
+                    );
+
+                expect(getScenario).toThrow();
+            },
+        );
     });
 });

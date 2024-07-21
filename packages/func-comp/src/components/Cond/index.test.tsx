@@ -316,49 +316,28 @@ describe('Cond', () => {
     });
 
     describe('when rendering a Cond subcomponent and the direct parent is NOT a Cond element', () => {
-        describe('and the subcomponent is Cond.If', () => {
-            const getScenario = () =>
-                render(
-                    <Cond>
-                        <div>
-                            <Cond.If expr={true}>If True</Cond.If>
-                        </div>
-                    </Cond>,
-                );
+        const subcomponents = [
+            { name: 'If', component: Cond.If, props: { expr: true } },
+            { name: 'ElseIf', component: Cond.ElseIf, props: { expr: true } },
+            { name: 'Else', component: Cond.Else, props: {} },
+        ];
 
-            it('should throw an error', () => {
+        it.each(subcomponents)(
+            'should throw an error when rendering $name',
+            ({ component: Subcomponent, props }) => {
+                const getScenario = () =>
+                    render(
+                        <Cond>
+                            <div>
+                                <Subcomponent {...(props as any)}>
+                                    Test
+                                </Subcomponent>
+                            </div>
+                        </Cond>,
+                    );
+
                 expect(getScenario).toThrow();
-            });
-        });
-
-        describe('and the subcomponent is Cond.ElseIf', () => {
-            const getScenario = () =>
-                render(
-                    <Cond>
-                        <div>
-                            <Cond.ElseIf expr={true}>ElseIf True</Cond.ElseIf>
-                        </div>
-                    </Cond>,
-                );
-
-            it('should throw an error', () => {
-                expect(getScenario).toThrow();
-            });
-        });
-
-        describe('and the subcomponent is Cond.Else', () => {
-            const getScenario = () =>
-                render(
-                    <Cond>
-                        <div>
-                            <Cond.Else>Else</Cond.Else>
-                        </div>
-                    </Cond>,
-                );
-
-            it('should throw an error', () => {
-                expect(getScenario).toThrow();
-            });
-        });
+            },
+        );
     });
 });
