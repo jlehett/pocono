@@ -1,5 +1,11 @@
 # @pocono/func-comp
 
+## 0.3.0
+
+### Minor Changes
+
+-   Add support for `break` prop on `Switch.Case` subcomponents to align behavior w/ traditional switch statement.
+
 ## 0.2.1
 
 ### Patch Changes
