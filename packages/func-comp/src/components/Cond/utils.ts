@@ -1,7 +1,5 @@
 import React from 'react';
-import If from './If';
-import ElseIf from './ElseIf';
-import Else from './Else';
+import { If, ElseIf, Else } from './subcomponents';
 import {
     doesChildHaveType,
     getIndexOfFirstEleOfType,
@@ -105,4 +103,3 @@ export function getFirstPassingCondChild(
 }
 
 //#endregion
-``;

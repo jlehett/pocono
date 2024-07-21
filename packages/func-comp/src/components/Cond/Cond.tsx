@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo } from 'react';
 import { getFirstPassingCondChild, validateChildren } from './utils';
+import { wrapChildrenWithParentFlag } from '../../utils/direct-child-validation';
 
 export type CondProps = {
     children: React.ReactNode;
@@ -15,5 +16,5 @@ export default function Cond({ children }: CondProps) {
         [children],
     );
 
-    return childToRender;
+    return wrapChildrenWithParentFlag(childToRender, 'Cond');
 }

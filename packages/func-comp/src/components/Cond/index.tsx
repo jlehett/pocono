@@ -1,12 +1,11 @@
 import Cond, { CondProps } from './Cond';
-import If, { IfProps } from './If';
-import ElseIf, { ElseIfProps } from './ElseIf';
-import Else, { ElseProps } from './Else';
+import { WithinParentProps } from '../../utils/direct-child-validation';
+import { ExprProp, If, ElseIf, Else } from './subcomponents';
 
 interface CondComponent extends React.FC<CondProps> {
-    If: React.FC<IfProps>;
-    ElseIf: React.FC<ElseIfProps>;
-    Else: React.FC<ElseProps>;
+    If: React.FC<ExprProp>;
+    ElseIf: React.FC<ExprProp>;
+    Else: React.FC<WithinParentProps>;
 }
 
 const CondComponent = Cond as CondComponent;
