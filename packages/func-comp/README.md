@@ -2,8 +2,6 @@
 
 A simple library providing React components that act as utilities for branching logic and conditional rendering.
 
----
-
 ## Table of Contents <!-- omit from toc -->
 
 - [Installation](#installation)
@@ -13,8 +11,6 @@ A simple library providing React components that act as utilities for branching 
     - [`Cond` Example](#cond-example)
     - [`If` Example](#if-example)
     - [`Switch` Example](#switch-example)
-
----
 
 ## Installation
 
