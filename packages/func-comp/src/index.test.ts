@@ -1,4 +1,4 @@
-import { Cond, If, Switch } from './';
+import { Cond, If, Switch } from '.';
 
 describe('Exports', () => {
     it('should export Cond and all of its subcomponents', () => {

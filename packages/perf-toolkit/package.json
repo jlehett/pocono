@@ -1,0 +1,20 @@
+{
+    "name": "@pocono/perf-toolkit",
+    "version": "0.0.0",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "files": [
+        "dist/"
+    ],
+    "scripts": {
+        "build": "tsc",
+        "test": "jest --no-deprecation"
+    },
+    "devDependencies": {
+        "@faker-js/faker": "^8.4.1",
+        "@types/lodash": "^4.17.7"
+    },
+    "dependencies": {
+        "lodash": "^4.17.21"
+    }
+}

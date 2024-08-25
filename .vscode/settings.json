@@ -6,9 +6,13 @@
         "javascript",
         "typescript"
     ],
+    "cSpell.ignorePaths": [
+        "**/src/test-data/**",
+    ],
     "cSpell.words": [
         "Cond",
         "endregion",
+        "pageref",
         "Subcomponent",
         "Subcomponents",
         "testid"

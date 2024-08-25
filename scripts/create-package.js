@@ -90,6 +90,32 @@ async function main() {
         JSON.stringify(tsconfig, null, 4),
     );
 
+    // Create jest.config.js
+    switch (packageType) {
+        case 'ESM':
+            await fs.writeFile(
+                path.join(packageDir, 'jest.config.js'),
+                `import esmJestConfig from '../../configs/esm/jest.config.js';
+
+export default {
+    ...esmJestConfig
+};`,
+            );
+            break;
+        case 'CJS':
+            await fs.writeFile(
+                path.join(packageDir, 'jest.config.js'),
+                `import cjsJestConfig from '../../configs/cjs/jest.config.js';
+
+export default {
+    ...cjsJestConfig
+};`,
+            );
+            break;
+        default:
+            throw new Error('Invalid package type');
+    }
+
     // Create README.md
     await fs.writeFile(
         path.join(packageDir, 'README.md'),
